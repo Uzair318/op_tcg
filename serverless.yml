@@ -1,0 +1,30 @@
+service: op-tcg-api
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+
+functions:
+  api:
+    handler: search.handler
+    events:
+      - httpApi:
+          path: /
+          method: get
+          cors: true
+  suggestions:
+    handler: suggestions.handler
+    events:
+      - httpApi:
+          path: /suggestions
+          method: get
+          cors: true
+package:
+  exclude:
+    - scripts/**
+    - client/**
+
+    
+plugins:
+  - serverless-offline

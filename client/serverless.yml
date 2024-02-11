@@ -1,0 +1,16 @@
+service: op-tcg-search-example-ui
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  lambdaHashingVersion: 20201221
+	
+plugins:
+  - serverless-finch
+
+custom:
+  client:
+    bucketName: op-tcg-search-example-bucket
+    distributionFolder: build
+    errorDocument: index.html
