@@ -2,6 +2,8 @@ const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
 
+const imageType = 'jpg'; // jpg, png, tiff, webp, svg
+
 const imagesDir = path.join(__dirname, '../images');
 if (!fs.existsSync(imagesDir)){
     fs.mkdirSync(imagesDir);
@@ -27,11 +29,7 @@ const downloadCardImages = async () => {
         const cards = JSON.parse(data);
 
         for (const card of cards) {
-            const imageUrl = `https://product-images.tcgplayer.com/fit-in/411x411/${card.productId}.jpg`;
-            if (!imageUrl) {
-                console.log(`No image URL for ${card.productName}, skipping.`);
-                continue;
-            }
+            const imageUrl = `https://product-images.tcgplayer.com/fit-in/411x411/${card.productId}.${imageType}`;
 
             const filename = `${card.productId}.jpg`;
             const imagePath = path.join(imagesDir, filename);
