@@ -9,18 +9,24 @@ if (!fs.existsSync(imagesDir)){
     fs.mkdirSync(imagesDir);
 }
 
-const downloadImage = async (url, path) => {
-    return axios({
-        url,
-        responseType: 'stream',
-    }).then(response =>
-        new Promise((resolve, reject) => {
-            response.data
-                .pipe(fs.createWriteStream(path))
-                .on('finish', () => resolve())
-                .on('error', e => reject(e));
-        }),
-    );
+const downloadImage = async (url, imagePath) => {
+    try {
+        const response = await axios({
+            url,
+            responseType: 'stream',
+        });
+        const writer = fs.createWriteStream(imagePath);
+
+        response.data.pipe(writer);
+
+        return new Promise((resolve, reject) => {
+            writer.on('finish', resolve);
+            writer.on('error', reject);
+        });
+    } catch (error) {
+        console.error('error downloading image')
+        throw error;
+    }
 };
 
 const downloadCardImages = async () => {
@@ -30,16 +36,16 @@ const downloadCardImages = async () => {
 
         for (const card of cards) {
             const imageUrl = `https://product-images.tcgplayer.com/fit-in/411x411/${card.productId}.${imageType}`;
-
-            const filename = `${card.productId}.jpg`;
+            const filename = `${card.productId}.${imageType}`;
             const imagePath = path.join(imagesDir, filename);
 
             console.log(`Downloading image for ${card.productName}...`);
-            await downloadImage(imageUrl, imagePath).then(() => {
+            try {
+                await downloadImage(imageUrl, imagePath);
                 console.log(`Image for ${card.productName} downloaded successfully.`);
-            }).catch(error => {
+            } catch (error) {
                 console.error(`Failed to download image for ${card.productName}: ${error}`);
-            });
+            }
         }
 
         console.log('All images have been downloaded.');
