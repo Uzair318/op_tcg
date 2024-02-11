@@ -30,6 +30,7 @@ const downloadImage = async (url, imagePath) => {
 };
 
 const downloadCardImages = async () => {
+    let productIdsWithoutPictures = [];
     try {
         const data = await fs.promises.readFile(path.join(__dirname, '../cards.json'), 'utf8');
         const cards = JSON.parse(data);
@@ -45,10 +46,13 @@ const downloadCardImages = async () => {
                 console.log(`Image for ${card.productName} downloaded successfully.`);
             } catch (error) {
                 console.error(`Failed to download image for ${card.productName}: ${error}`);
+                productIdsWithoutPictures.push(card.productId);
             }
         }
 
         console.log('All images have been downloaded.');
+        console.log('product ids without pictures: ')
+        console.log(productIdsWithoutPictures);
     } catch (error) {
         console.error('Failed to download images:', error);
     }
